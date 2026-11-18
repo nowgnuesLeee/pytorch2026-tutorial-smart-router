@@ -104,7 +104,6 @@ def ask_level(text: str) -> str:
          {"role": "user", "content": text[:MAX_INPUT_CHARS]}],
         purpose="classify",
         response_format=LEVEL_SCHEMA,
-        extra_body={"chat_template_kwargs": {"enable_thinking": False}},
         temperature=0,
         max_tokens=50,
         timeout=5,
@@ -120,20 +119,10 @@ def ask_level(text: str) -> str:
 | 설정 | 이유 |
 | :--- | :--- |
 | `response_format` | `{"level": "easy" \| "hard"}` 모양으로만 답하게 |
-| `enable_thinking: False` | 추론 모델이 답 전에 생각하느라 토큰과 시간을 쓰지 않게 |
 | `temperature=0` | 같은 질문에는 늘 같은 판정 |
+| `max_tokens=50` | 답은 `{"level": ...}` 한 줄이면 충분 |
 | `timeout=5` | 판정이 늦으면 라우터 전체가 늦어진다 |
 | `retries=0` | 늦은 판정은 의미 없으니 바로 포기 |
-
----
-
-# 생각을 끄면
-
-| 설정 | 시간 | 출력 토큰 | 결과 |
-| :--- | ---: | ---: | :--- |
-| 생각 켜짐, `max_tokens=300` | 2.2s | 300 | 생각하다 잘려서 빈 답 ❌ |
-| 생각 켜짐, `max_tokens=1500` | 5.6s | 748 | `{"level": "hard"}` |
-| 생각 꺼짐 | **0.3s** | **10** | `{"level": "hard"}` ✅ |
 
 ---
 

@@ -16,7 +16,6 @@ hybrid  점수가 확실하면 → score 결과
 작은 모델은 JSON만 달라고 해도 `판정: {"level": "hard"} 입니다!`처럼 앞뒤에 말을 붙이곤 합니다. 그래서 **구조화 출력(structured outputs)**으로 답의 모양을 고정합니다.
 
 - `response_format=LEVEL_SCHEMA`: JSON 스키마를 주면 서버(vLLM 등)가 그 모양에 맞는 토큰만 고릅니다. 답은 `{"level": "easy"}` 또는 `{"level": "hard"}`뿐이라 `json.loads`로 바로 읽습니다.
-- `extra_body={"chat_template_kwargs": {"enable_thinking": False}}`: 추론(reasoning) 모델은 답하기 전에 생각하는 데 토큰을 씁니다. 판정에는 생각이 필요 없으니 꺼서 빠르고 싸게 만듭니다. 켜 두면 `max_tokens` 안에서 생각하다 끊겨 답이 비기도 합니다.
 - `temperature=0`: 같은 질문에는 늘 같은 판정을 받기 위해서
 - `timeout=5`, `retries=0`: 판정이 늦으면 라우터 전체가 늦어지니까
 

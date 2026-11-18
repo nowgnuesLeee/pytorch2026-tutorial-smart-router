@@ -131,8 +131,6 @@ def ask_level(text: str) -> str:
          {"role": "user", "content": text[:MAX_INPUT_CHARS]}],
         purpose="classify",
         response_format=LEVEL_SCHEMA,  # {"level": "easy" | "hard"} 모양으로만 답하게
-        # 추론(reasoning) 모델이 답 전에 생각하느라 토큰과 시간을 쓰지 않게 한다
-        extra_body={"chat_template_kwargs": {"enable_thinking": False}},
         temperature=0,
         max_tokens=50,
         timeout=5,
