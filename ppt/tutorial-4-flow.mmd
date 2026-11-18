@@ -1,0 +1,12 @@
+%%{init: {"themeVariables": {"fontSize": "18px"}}}%%
+sequenceDiagram
+    participant C as 채팅 페이지
+    participant R as 라우터 서버<br/>(127.0.0.1:8080/v1)
+    participant L as 백엔드 LLM
+
+    C->>R: POST /v1/chat/completions<br/>model: "router"
+    Note over R: ① 마지막 사용자 메시지만 꺼내기<br/>② 분류기(hybrid)로 small / big 결정<br/>③ model 값을 고른 모델 이름으로 바꾸기
+    R->>L: 그대로 전달
+    L-->>R: 답변 + usage
+    Note over R: ④ 토큰 수 · 비용 로그 남기기
+    R-->>C: 답변 + x-router-size / model / note

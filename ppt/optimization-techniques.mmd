@@ -1,0 +1,16 @@
+%%{init: {"flowchart": {"wrappingWidth": 400, "nodeSpacing": 40, "rankSpacing": 50}, "themeVariables": {"fontSize": "18px"}}}%%
+flowchart TB
+    T["토큰 최적화"]
+
+    PR["<b>프롬프트 최적화</b><br/>무엇을 보내나<br/><small>프롬프트 압축 · 대화 요약<br/>RAG · 출력 길이 제한</small>"]
+    MS["<b>모델 선택</b><br/>어느 모델에 보내나<br/><small>라우팅 · 캐스케이드</small>"]
+    IN["<b>추론 최적화</b><br/>모델을 어떻게 돌리나<br/><small>KV 캐시 재사용 · 배칭<br/>투기적 디코딩 · 양자화</small>"]
+
+    T --> PR & MS & IN
+
+    classDef root fill:#eef2ff,stroke:#6366f1,stroke-width:2px,color:#1e1b4b
+    classDef other fill:#f3f4f6,stroke:#9ca3af,color:#374151
+    classDef focus fill:#fef3c7,stroke:#d97706,stroke-width:3px,color:#451a03
+    class T root
+    class PR,IN other
+    class MS focus

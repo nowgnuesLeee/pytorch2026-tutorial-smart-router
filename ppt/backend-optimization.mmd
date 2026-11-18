@@ -1,0 +1,33 @@
+%%{init: {"flowchart": {"wrappingWidth": 400, "nodeSpacing": 30, "rankSpacing": 40}, "themeVariables": {"fontSize": "18px"}}}%%
+flowchart LR
+    Q["요청<br/><small>분류기가 모델을 고른 뒤</small>"]
+
+    subgraph Router["라우터 뒷단"]
+        C["① 응답 캐시 · 요청 합치기<br/><small>같은 요청은 GPU까지 보내지 않음</small>"]
+        P["② KV 캐시 인지 라우팅<br/><small>프롬프트 앞부분이 캐시된 서버로<br/>vLLM 캐시 이벤트로 실시간 갱신</small>"]
+        LB["③ 부하 분산<br/><small>처리 중 요청 수 · 지연 시간</small>"]
+        F["④ 장애 대응<br/><small>헬스 체크 · 서킷 브레이커<br/>대체 모델</small>"]
+        C --> P --> LB --> F
+    end
+
+    subgraph Backends["같은 모델을 띄운 서버들"]
+        V1["vLLM #1<br/><small>KV 캐시 적중 ✅</small>"]
+        V2["vLLM #2<br/><small>캐시 없음</small>"]
+        V3["vLLM #3<br/><small>장애 ❌</small>"]
+    end
+
+    Q --> C
+    F == "선택" ==> V1
+    F -.-> V2
+    F -. "제외" .-x V3
+
+    classDef client fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    classDef step fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#451a03
+    classDef hit fill:#dcfce7,stroke:#16a34a,stroke-width:3px,color:#052e16
+    classDef idle fill:#f3f4f6,stroke:#9ca3af,color:#374151
+    classDef down fill:#fee2e2,stroke:#dc2626,color:#450a0a
+    class Q client
+    class C,P,LB,F step
+    class V1 hit
+    class V2 idle
+    class V3 down

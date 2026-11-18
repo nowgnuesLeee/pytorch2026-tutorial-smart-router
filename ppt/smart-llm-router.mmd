@@ -1,0 +1,23 @@
+flowchart LR
+    Q["사용자 질문"]
+
+    subgraph Router["스마트 라우터"]
+        direction TB
+        K{{"분류기<br/>keyword · score · llm · hybrid"}}
+    end
+
+    S["작은 모델<br/>빠르고 저렴"]
+    L["큰 모델<br/>느리지만 똑똑함"]
+
+    Q --> K
+    K -- "쉬운 질문" --> S
+    K -- "어려운 질문" --> L
+
+    classDef client fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    classDef router fill:#fef3c7,stroke:#d97706,stroke-width:3px,color:#451a03
+    classDef small fill:#dcfce7,stroke:#16a34a,color:#052e16
+    classDef big fill:#fee2e2,stroke:#dc2626,color:#450a0a
+    class Q client
+    class K router
+    class S small
+    class L big

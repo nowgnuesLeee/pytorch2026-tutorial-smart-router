@@ -1,0 +1,25 @@
+flowchart LR
+    subgraph Clients["클라이언트"]
+        direction TB
+        A["채팅 페이지"]
+        B["OpenAI SDK 앱"]
+        C["curl / 에이전트"]
+    end
+
+    R{{"스마트 라우터<br/><b>http://127.0.0.1:8080/v1</b><br/>OpenAI 호환 · 주소 하나"}}
+
+    subgraph Models["백엔드 LLM"]
+        direction TB
+        M1["LLM A"]
+        M2["LLM B"]
+        M3["LLM C"]
+    end
+
+    A & B & C --> R --> M1 & M2 & M3
+
+    classDef client fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    classDef router fill:#fef3c7,stroke:#d97706,stroke-width:3px,color:#451a03
+    classDef llm fill:#dcfce7,stroke:#16a34a,color:#052e16
+    class A,B,C client
+    class R router
+    class M1,M2,M3 llm

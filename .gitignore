@@ -1,0 +1,14 @@
+# 비밀 값
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# 편집기·OS
+*.swp
+*.swo
+.DS_Store
+.idea/
+.vscode/
