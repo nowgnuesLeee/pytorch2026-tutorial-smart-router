@@ -42,29 +42,16 @@ MODELS = {
     "big": os.environ.get("BIG_MODEL", "big-model"),
 }
 
-# 1M 토큰당 USD (입력, 출력). 기본값은 예시일 뿐이니 .env에 토큰 팩토리 가격을 채우세요.
-PRICES = {
-    "small": (float(os.environ.get("SMALL_PRICE_IN", "0.1")),
-              float(os.environ.get("SMALL_PRICE_OUT", "0.4"))),
-    "big": (float(os.environ.get("BIG_PRICE_IN", "2.0")),
-            float(os.environ.get("BIG_PRICE_OUT", "8.0"))),
-}
-
 client = OpenAI(base_url=BASE_URL, api_key=API_KEY, timeout=60)
 
-# 용도별 호출 수와 비용. run.py가 "분류에 LLM을 몇 번 썼나"를 보여 줄 때 쓴다.
+# 용도별 호출 수와 토큰 수(입력+출력). run.py가 "분류에 LLM을 몇 번 썼나"를 보여 줄 때 쓴다.
 CALLS: Counter = Counter()
-COSTS: Counter = Counter()
-
-
-def cost_of(size: str, tokens_in: int, tokens_out: int) -> float:
-    price_in, price_out = PRICES[size]
-    return (tokens_in * price_in + tokens_out * price_out) / 1_000_000
+TOKENS: Counter = Counter()
 
 
 def chat(size: str, messages: list[dict], purpose: str = "answer",
          retries: int | None = None, **kwargs) -> dict:
-    """size("small"/"big") 모델로 대화를 보내고, 답과 토큰·비용·시간을 함께 돌려준다.
+    """size("small"/"big") 모델로 대화를 보내고, 답과 토큰·시간을 함께 돌려준다.
 
     retries를 주면 실패 시 재시도 횟수를 바꾼다 (기본은 openai 라이브러리 기본값 2회).
     """
@@ -75,16 +62,14 @@ def chat(size: str, messages: list[dict], purpose: str = "answer",
 
     tokens_in = resp.usage.prompt_tokens if resp.usage else 0
     tokens_out = resp.usage.completion_tokens if resp.usage else 0
-    cost = cost_of(size, tokens_in, tokens_out)
     CALLS[purpose] += 1
-    COSTS[purpose] += cost
+    TOKENS[purpose] += tokens_in + tokens_out
     return {
         "text": resp.choices[0].message.content or "",
         "size": size,
         "model": MODELS[size],
         "tokens_in": tokens_in,
         "tokens_out": tokens_out,
-        "cost": cost,
         "seconds": seconds,
     }
 
@@ -100,5 +85,5 @@ if __name__ == "__main__":
     for size in ("small", "big"):
         r = ask(size, question)
         print(f"── {size}: {r['model']}  {r['seconds']:.1f}s  "
-              f"토큰 {r['tokens_in']}+{r['tokens_out']}  ${r['cost']:.6f}")
+              f"토큰 {r['tokens_in']}+{r['tokens_out']}")
         print(r["text"].strip(), "\n")

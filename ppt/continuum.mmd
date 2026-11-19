@@ -1,0 +1,25 @@
+%%{init: {"flowchart": {"wrappingWidth": 400, "nodeSpacing": 40, "rankSpacing": 70}, "themeVariables": {"fontSize": "18px"}}}%%
+flowchart LR
+    App["애플리케이션"]
+    Router{{"Router<br/>요청 처리"}}
+    Hub["Hub<br/>관제 · 정산"]
+
+    subgraph LLMs["LLM"]
+        direction TB
+        M1["ChatGPT"]
+        M2["Claude"]
+        M3["Gemini"]
+        M4["자체 호스팅 모델"]
+    end
+
+    App --> Router --> M1 & M2 & M3 & M4
+    Hub <-. "정책 · 키 / 사용량" .-> Router
+
+    classDef client fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    classDef router fill:#fef3c7,stroke:#d97706,stroke-width:3px,color:#451a03
+    classDef hub fill:#f3f4f6,stroke:#6b7280,stroke-width:2px,color:#111827
+    classDef llm fill:#dcfce7,stroke:#16a34a,color:#052e16
+    class App client
+    class Router router
+    class Hub hub
+    class M1,M2,M3,M4 llm

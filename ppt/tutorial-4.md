@@ -113,7 +113,6 @@ router_headers = {
     "x-router-size": size,
     "x-router-model": llm.MODELS[size],
     "x-router-note": urllib.parse.quote(note),  # 헤더는 ASCII만 되므로 인코딩
-    "x-router-price": "{},{}".format(*llm.PRICES[size]),  # 비용 계산용
 }
 ```
 
@@ -133,9 +132,8 @@ CLASSIFIER=score PORT=9000 uv run server.py   # 분류기, 포트 바꾸기
 
 ---
 
-# 채팅 페이지에서 대화하기
-
-<img src="./chat-page.png" height="500">
+## 채팅 페이지에서 대화해 보기
+`http://127.0.0.1:8080`
 
 ---
 
@@ -144,9 +142,9 @@ CLASSIFIER=score PORT=9000 uv run server.py   # 분류기, 포트 바꾸기
 | 표시 | 뜻 |
 | :--- | :--- |
 | `SMALL` / `BIG` | 라우터가 고른 모델 |
-| `zai-org/GLM-5.3-Flash` | 실제로 답한 모델 |
+| `google/gemma-4-26b` | 실제로 답한 모델 |
 | `score=-0.30 (확실)` | 왜 그렇게 골랐는지 |
-| `토큰 29+964 · $0.000389 · 48.9s` | 이번 답변의 토큰, 비용, 시간 |
+| `토큰 26+359 · 1.3s` | 이번 답변의 토큰 수(입력+출력)와 시간 |
 
 응답 헤더 `x-router-*`를 읽어서 보여 준다
 
@@ -155,18 +153,17 @@ CLASSIFIER=score PORT=9000 uv run server.py   # 분류기, 포트 바꾸기
 # 터미널에도 찍힌다
 
 ```text
-[router] small zai-org/GLM-5.3-Flash  score=-0.30 (확실)  토큰 28+683  $0.000276  40.0s
-[router] small zai-org/GLM-5.3-Flash  score=+0.35 (애매) → llm=easy  토큰 29+964  $0.000389  48.9s
-[router] big   deepseek-ai/DeepSeek-V4.1-Flash  score=+0.95 (확실)  토큰 149+2275  $0.018498  73.3s
+[router] small google/gemma-4-26b  score=-0.30 (확실)  토큰 26+359  1.3s
+[router] big   deepseek-ai/DeepSeek-V4.1-Flash  score=+0.95 (확실)  토큰 149+2275  73.3s
 ```
-어느 모델로 갔는지, 얼마 들었는지 바로 보인다
+어느 모델로 갔는지, 토큰을 얼마나 썼는지 바로 보인다
 
 ---
 
 # 해 보기
 
 - 쉬운 질문, 어려운 질문을 섞어서 대화해 보자
-- 입력창 아래에서 **자동 라우팅 → 큰 모델**로 바꿔 같은 질문의 비용을 비교해 보자
+- 입력창 아래에서 **자동 라우팅 → 큰 모델**로 바꿔 같은 질문의 토큰 수와 시간을 비교해 보자
 - 퀴즈의 함정 질문도 넣어 보자
   "고마워! 그런데 하나만 더. 서버 여러 대가 같은 캐시를 쓰는데, …"
 - 분류기를 바꿔 다시 켜 보자: `CLASSIFIER=score uv run server.py`
@@ -180,5 +177,3 @@ CLASSIFIER=score PORT=9000 uv run server.py   # 분류기, 포트 바꾸기
 채팅 페이지도 같은 주소에서
 
 추가 패키지 없이, 주소 하나로
-
-(실습용이라 인증이 없으니 외부에 공개하지 말 것)

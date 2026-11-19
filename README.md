@@ -13,7 +13,7 @@
 | [`tutorial-3/`](./tutorial-3) | **3단계 시작점**: LLM 분류기 `llm`, `hybrid` (1·2단계 완성됨) |
 | [`final/`](./final) | **완성본**: 분류기 네 개 + OpenAI 호환 라우터 서버 |
 | [`chat/`](./chat) | 채팅 페이지 빌드 결과 (React + Vercel AI SDK). 라우터 서버가 `/`에서 띄워 줌 |
-| [`llm.py`](./llm.py) | 모든 단계가 함께 쓰는 토큰 팩토리 호출 (토큰·비용 계산) |
+| [`llm.py`](./llm.py) | 모든 단계가 함께 쓰는 토큰 팩토리 호출 (토큰 수·시간 기록) |
 | [`questions.json`](./questions.json) | 질문 세트 (질문, 정답 모델, 함정 설명) |
 | [`SESSION_INTRO.md`](./SESSION_INTRO.md) | 행사 홈페이지용 세션 소개 |
 
@@ -54,7 +54,7 @@ uv run run.py keyword                               # 분류 + 고른 모델로 
 
 | 순서 | 내용 | 시간 |
 | :--- | :--- | :---: |
-| 도입 | `llm.py`로 같은 질문을 두 모델에 보내 품질·속도·비용 비교 | 10분 |
+| 도입 | `llm.py`로 같은 질문을 두 모델에 보내 품질·속도·토큰 사용량 비교 | 10분 |
 | 1단계 | 키워드 분류기, 규칙의 충돌과 빈틈 찾기 | 15분 |
 | 2단계 | 시그널별 가중치 점수 분류기, 가중치와 경계값 바꿔 보기 | 25분 |
 | 3단계 | 작은 모델에게 판정 맡기기, 실패하면 점수로 되돌아가기, 경계 근처에서만 LLM 부르기 | 25분 |
@@ -64,7 +64,7 @@ uv run run.py keyword                               # 분류 + 고른 모델로 
 ## run.py 사용법
 
 ```bash
-uv run run.py keyword               # 분류 + 답변 (모델 호출 비용이 듭니다)
+uv run run.py keyword               # 분류 + 답변 (답변용으로 모델을 호출해 토큰을 씁니다)
 uv run run.py score --no-answer     # 분류만
 uv run run.py all --no-answer       # 지금 폴더의 분류기를 모두 비교
 uv run run.py hybrid --only 18,20   # 일부 질문만
@@ -79,7 +79,7 @@ uv run run.py hybrid --only 18,20   # 일부 질문만
 ── 정확도 20/24 · 분류용 LLM 호출 0회 · 평균 분류 0ms
 ```
 
-답변까지 받으면 마지막 줄에 "전부 큰 모델이었다면 약 $…"도 보여 줍니다. 같은 토큰 수를 큰 모델 가격으로 계산한 추정치입니다.
+답변까지 받으면 마지막 줄에 쓴 토큰 합계(분류용 포함)를 보여 줍니다.
 
 ## 라우터 서버 (final/)
 
@@ -108,7 +108,6 @@ curl http://127.0.0.1:8080/v1/chat/completions \
 | :--- | :--- |
 | `LLM_BASE_URL`, `LLM_API_KEY` | 토큰 팩토리 OpenAI 호환 엔드포인트와 키 |
 | `SMALL_MODEL`, `BIG_MODEL` | 작은 모델, 큰 모델 이름 |
-| `SMALL_PRICE_IN/OUT`, `BIG_PRICE_IN/OUT` | 1M 토큰당 가격(USD), 비용 계산용 |
 | `QUESTIONS` | (선택) 다른 질문 세트 파일 경로 |
 | `CLASSIFIER`, `HOST`, `PORT` | (선택) 서버 설정 |
 

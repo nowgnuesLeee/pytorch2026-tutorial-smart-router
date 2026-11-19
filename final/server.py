@@ -72,7 +72,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Expose-Headers",
-                         "x-router-size, x-router-model, x-router-note, x-router-price")
+                         "x-router-size, x-router-model, x-router-note")
 
     def _json(self, status: int, payload: dict, extra_headers: dict | None = None) -> None:
         data = json.dumps(payload, ensure_ascii=False).encode()
@@ -127,8 +127,7 @@ class Handler(BaseHTTPRequestHandler):
         if body.get("stream"):
             body["stream_options"] = {"include_usage": True}  # 스트림 끝에서 토큰 수를 받기 위해
         router_headers = {"x-router-size": size, "x-router-model": llm.MODELS[size],
-                          "x-router-note": urllib.parse.quote(note),  # 헤더는 ASCII만 되므로 인코딩
-                          "x-router-price": "{},{}".format(*llm.PRICES[size])}  # 1M 토큰당 USD (입력,출력)
+                          "x-router-note": urllib.parse.quote(note)}  # 헤더는 ASCII만 되므로 인코딩
 
         try:
             resp = urllib.request.urlopen(upstream_request(body), timeout=120)
@@ -145,14 +144,12 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 payload = json.loads(resp.read())
                 usage = payload.get("usage") or {}
-                payload["router"] = {"size": size, "model": llm.MODELS[size], "note": note,
-                                     "cost": llm.cost_of(size, usage.get("prompt_tokens", 0),
-                                                         usage.get("completion_tokens", 0))}
+                payload["router"] = {"size": size, "model": llm.MODELS[size], "note": note}
                 self._json(200, payload, router_headers)
 
         tokens_in, tokens_out = usage.get("prompt_tokens", 0), usage.get("completion_tokens", 0)
         print(f"[router] {size:<5} {llm.MODELS[size]}  {note}  "
-              f"토큰 {tokens_in}+{tokens_out}  ${llm.cost_of(size, tokens_in, tokens_out):.6f}  "
+              f"토큰 {tokens_in}+{tokens_out}  "
               f"{time.perf_counter() - start:.1f}s", flush=True)
 
     def _relay_stream(self, resp, router_headers: dict) -> dict:

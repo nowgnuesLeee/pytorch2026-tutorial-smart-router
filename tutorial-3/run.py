@@ -50,10 +50,9 @@ def short(text: str, width: int) -> str:
 def run(name: str, questions: list[dict], answer: bool) -> dict:
     fn = CLASSIFIERS[name]
     llm.CALLS.clear()
-    llm.COSTS.clear()
+    llm.TOKENS.clear()
     correct = 0
     classify_seconds = 0.0
-    big_cost_estimate = 0.0
 
     print(f"\n=== {name} ===")
     for q in questions:
@@ -66,9 +65,7 @@ def run(name: str, questions: list[dict], answer: bool) -> dict:
         line = f"{'✅' if ok else '❌'} {q['id']:>2} {size:<5} {short(q['q'], 34):<34} {note}"
         if answer:
             r = llm.ask(size, q["q"])
-            # 같은 토큰 수를 큰 모델 가격으로 계산한 값 (실제로는 답 길이가 달라질 수 있는 추정치)
-            big_cost_estimate += llm.cost_of("big", r["tokens_in"], r["tokens_out"])
-            line += f"\n      {r['seconds']:.1f}s ${r['cost']:.6f} → {short(r['text'], 60)}"
+            line += f"\n      {r['seconds']:.1f}s 토큰 {r['tokens_in']}+{r['tokens_out']} → {short(r['text'], 60)}"
         print(line)
 
     total = len(questions)
@@ -77,13 +74,12 @@ def run(name: str, questions: list[dict], answer: bool) -> dict:
         "accuracy": f"{correct}/{total}",
         "llm_calls": llm.CALLS["classify"],
         "classify_ms": classify_seconds / max(total, 1) * 1000,
-        "cost": llm.COSTS["classify"] + llm.COSTS["answer"],
     }
     print(f"── 정확도 {summary['accuracy']} · 분류용 LLM 호출 {summary['llm_calls']}회 · "
           f"평균 분류 {summary['classify_ms']:.0f}ms")
     if answer:
-        print(f"── 비용 ${summary['cost']:.6f} (분류 ${llm.COSTS['classify']:.6f} 포함) · "
-              f"전부 큰 모델이었다면 약 ${big_cost_estimate + llm.COSTS['classify']:.6f}")
+        print(f"── 토큰 {llm.TOKENS['classify'] + llm.TOKENS['answer']} "
+              f"(분류 {llm.TOKENS['classify']} 포함)")
     return summary
 
 
