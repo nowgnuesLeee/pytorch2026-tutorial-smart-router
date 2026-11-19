@@ -48,7 +48,7 @@ marp: true
 
 # 구조
 
-![h:380](./continuum.svg)
+<img src="./continuum.svg" height="400">
 
 Router는 요청을 처리하고, Hub는 Router를 관제한다
 Router는 혼자서도 동작한다
@@ -88,6 +88,3 @@ Router는 혼자서도 동작한다
 
 ## 앞단에서는 모델을 고르고, 뒷단에서는 캐시를 살리고
 Hub로 토큰을 어디에 쓰는지 보이게
-
----
-
