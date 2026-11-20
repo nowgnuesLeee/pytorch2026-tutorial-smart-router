@@ -6,11 +6,21 @@ marp: true
 
 ---
 
+# 목차
+1. AI 시대를 대비하는 방법
+2. 튜토리얼
+3. Continuum Router & Hub
+
+---
+
 # AI 시대를 대비하는 방법
 
 ---
 
-<img src="./t-800.png">
+<style scoped>img { display: block; margin: 0 auto; }</style>
+
+![h:500](./t-800.png)
+너 이리와서 프롬프트 까봐
 
 ---
 
@@ -59,3 +69,20 @@ liteLLM, RouteLLM, vLLM, Continuum Router
 2. 가중치 기반 분류
 3. LLM 분류
 4. 채팅 페이지에서 확인
+
+---
+
+<style scoped>section { text-align: center; } img { display: block; margin: 0 auto; }</style>
+
+![h:420](./qr.jpg)
+
+https://github.com/nowgnuesLeee/pytorch2026-tutorial-smart-router
+
+---
+
+
+LLM_BASE_URL=https://api.console.lablup.ai/v1
+LLM_API_KEY=
+
+SMALL_MODEL=google/gemma-4-26b
+BIG_MODEL=deepseek-ai/DeepSeek-V4.1-Flash

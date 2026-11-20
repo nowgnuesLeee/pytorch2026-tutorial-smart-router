@@ -83,14 +83,14 @@ def signals(text: str) -> dict[str, bool]:
 def difficulty(text: str) -> float:
     # TODO(2-1): signals(text)에서 켜진(True) 시그널의 가중치를 모두 더해 돌려주세요.
     #            가중치는 SIGNALS[name][0] 입니다.
-    return sum(SIGNALS[name][0] for name, on in signals(text).items() if on)
+    NotImplemented
 
 
 def score(text: str):
     s = difficulty(text)
     # TODO(2-2): s가 THRESHOLD 이상이면 "big", 아니면 "small"을 고르고
     #            (결과, f"score={s:+.2f}")를 돌려주세요.
-    return "big" if s >= THRESHOLD else "small", f"score={s:+.2f}"
+    NotImplemented
 
 
 # TODO(2-3): `uv run run.py all --no-answer`로 keyword와 비교해 보고,

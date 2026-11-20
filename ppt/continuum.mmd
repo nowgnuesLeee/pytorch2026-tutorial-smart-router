@@ -2,7 +2,7 @@
 flowchart LR
     App["애플리케이션"]
     Router{{"Router<br/>요청 처리"}}
-    Hub["Hub<br/>관제 · 정산"]
+    Hub["Hub<br/>관제, 정산"]
 
     subgraph LLMs["LLM"]
         direction TB
@@ -13,7 +13,7 @@ flowchart LR
     end
 
     App --> Router --> M1 & M2 & M3 & M4
-    Hub <-. "정책 · 키 / 사용량" .-> Router
+    Hub <-. "정책, 키 / 사용량" .-> Router
 
     classDef client fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
     classDef router fill:#fef3c7,stroke:#d97706,stroke-width:3px,color:#451a03

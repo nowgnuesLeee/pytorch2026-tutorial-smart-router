@@ -144,12 +144,7 @@ def llm(text: str):
     #   - 예외가 나면 (시간 초과, 연결 실패, 빈 답, 예상 밖의 값 …)
     #       → (score(text)[0], f"llm 실패({type(e).__name__}) → score")
     #   - 아니면 → (size, f"llm={level}")
-    try:
-        level = ask_level(text)
-        size = LEVEL_TO_SIZE[level]
-    except Exception as e:
-        return score(text)[0], f"llm 실패({type(e).__name__}) → score"
-    return size, f"llm={level}"
+    NotImplemented
 
 
 MARGIN = 0.15  # 점수가 THRESHOLD ± MARGIN 안이면 "애매하다"
@@ -160,10 +155,7 @@ def hybrid(text: str):
     # TODO(3-2): 점수가 THRESHOLD에서 MARGIN보다 멀리 떨어져 있으면 (abs(s - THRESHOLD) > MARGIN)
     #              점수로 바로 결정하고 → (결과, f"score={s:+.2f} (확실)")
     #            가까우면 llm(text)에게 묻습니다 → (결과, f"score={s:+.2f} (애매) → {note}")
-    if abs(s - THRESHOLD) > MARGIN:
-        return ("big" if s >= THRESHOLD else "small"), f"score={s:+.2f} (확실)"
-    size, note = llm(text)
-    return size, f"score={s:+.2f} (애매) → {note}"
+    NotImplemented
 
 
 # TODO(3-3): `uv run run.py all --no-answer`로 네 분류기의 정확도와 LLM 호출 수를 비교하고,
